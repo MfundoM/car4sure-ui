@@ -27,10 +27,11 @@ const Login = ({ setUser }) => {
 
         axios.get('/sanctum/csrf-cookie').then(() => {
             axios.post('/api/login', form)
-                .then(res => {
-                    localStorage.setItem('token', res.data.token);
-                    axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
-                    setUser(res.data.user);
+                .then(response => {
+                    console.log(response.data.token);
+                    sessionStorage.setItem('token', response.data.token);
+                    axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+                    setUser(response.data.user);
                     navigate('/dashboard');
                 })
                 .catch(err => {

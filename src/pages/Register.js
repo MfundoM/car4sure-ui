@@ -42,8 +42,9 @@ const Register = ({ setUser }) => {
             };
 
             const { data } = await axios.post('/api/login', loginForm);
+            console.log(data.token);
 
-            localStorage.setItem('token', data.token);
+            sessionStorage.setItem('token', data.token);
             axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
 
             setUser(data.user);

@@ -5,6 +5,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import axios from './axios';
 import Dashboard from './pages/Dashboard';
+import PolicyView from './pages/PolicyView';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -13,7 +14,7 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     if (token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       axios.get('/api/user')
@@ -34,9 +35,6 @@ function App() {
       <Routes>
         <Route path="/" element={user ? <Navigate to="/dashboard" /> : <Login setUser={setUser} />} />
         <Route path="/register" element={user ? <Navigate to="/dashboard" /> : <Register setUser={setUser} />} />
-        {/* <Route path="/" element={<Login setUser={setUser} />} />
-        <Route path="/register" element={<Register setUser={setUser} />} /> */}
-
         <Route
           path="/dashboard"
           element={
@@ -47,7 +45,16 @@ function App() {
             </ProtectedRoute>
           }
         />
-
+        <Route
+          path="/policies/:id"
+          element={
+            <ProtectedRoute user={user}>
+              <div className='container'>
+                <PolicyView />
+              </div>
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router >
   );

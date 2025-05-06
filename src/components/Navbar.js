@@ -13,7 +13,7 @@ const Navbar = ({ user, setUser }) => {
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
             <div className="container-fluid">
-                <Link className="navbar-brand" to="/">Car4Sure</Link>
+                <Link className="navbar-brand" to="/">Car4Sure - Insurance </Link>
                 <div className="collapse navbar-collapse">
                     <ul className="navbar-nav ms-auto">
                         {user ? (

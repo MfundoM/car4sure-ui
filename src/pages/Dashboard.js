@@ -1,42 +1,93 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from '../axios';
+import { Link, useNavigate } from 'react-router-dom';
 
 function Dashboard() {
+    const [policies, setPolicies] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        setLoading(true);
+        axios.get('/api/policies')
+            .then(response => {
+                console.log(response.data.data.data);
+                setPolicies(response.data.data.data);
+            })
+            .catch(err => {
+                console.error(err);
+                setPolicies([]);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }, []);
+
+    const handleDelete = async (id) => {
+        if (!window.confirm('Are you sure you want to delete this policy?')) return;
+
+        try {
+            await axios.delete(`/api/policies/${id}`);
+            setPolicies(policies.filter(policy => policy.id !== id));
+        } catch (err) {
+            alert('Failed to delete policy.');
+        }
+    };
+
+    if (loading) return <div className="text-center mt-5">Loading policies...</div>;
+
     return (
         <div className="d-flex" id="wrapper">
             <div id="page-content-wrapper" className="flex-grow-1">
                 <div className="container-fluid mt-4">
-                    <h1 className="mt-4">Dashboard</h1>
-                    <p>This is your dashboard where you can manage policies, view stats, and more.</p>
-
-                    <div className="row">
-                        <div className="col-md-4 mb-4">
-                            <div className="card shadow-sm">
-                                <div className="card-body">
-                                    <h5 className="card-title">Policies</h5>
-                                    <p className="card-text">View and manage all insurance policies.</p>
-                                    <a href="#" className="btn btn-primary">Go</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-4 mb-4">
-                            <div className="card shadow-sm">
-                                <div className="card-body">
-                                    <h5 className="card-title">Users</h5>
-                                    <p className="card-text">Manage user accounts and roles.</p>
-                                    <a href="#" className="btn btn-primary">Go</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-4 mb-4">
-                            <div className="card shadow-sm">
-                                <div className="card-body">
-                                    <h5 className="card-title">Reports</h5>
-                                    <p className="card-text">Generate monthly reports and analytics.</p>
-                                    <a href="#" className="btn btn-primary">Go</a>
-                                </div>
-                            </div>
-                        </div>
+                    <div className="d-flex align-items-center mt-4">
+                        <h1 className="mb-0">Dashboard</h1>
+                        <button className="btn btn-sm btn-success ms-auto">Apply for a policy</button>
                     </div>
+                    {policies.length === 0 ? (
+                        <div className="alert alert-info text-center">
+                            You don't have any policies, click <a href='/'>here</a> to apply a policy.
+                        </div>
+                    ) : (
+                        <div className="table-responsive">
+                            <table className="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Policy ID</th>
+                                        <th>Holder Name</th>
+                                        <th>Policy Number</th>
+                                        <th>Policy Status</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {policies.map(policy => (
+                                        <tr key={policy.id}>
+                                            <td>{policy.id}</td>
+                                            <td>
+                                                {policy.policy_holder.first_name} {policy.policy_holder.last_name}
+                                            </td>
+                                            <td>{policy.policy_no}</td>
+                                            <td>{policy.policy_status}</td>
+                                            <td>
+                                                {policy.policy_effective_date}
+                                            </td>
+                                            <td>
+                                                {policy.policy_expiration_date}
+                                            </td>
+                                            <td>
+                                                <button className="btn btn-sm btn-info me-1" onClick={() => navigate(`/policies/${policy.id}`)}>View</button>
+                                                <button className="btn btn-sm btn-warning me-1" onClick={() => navigate(`/policies/${policy.id}/edit`)}>Edit</button>
+                                                <button className="btn btn-sm btn-danger" onClick={() => handleDelete(policy.id)}>Delete</button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
