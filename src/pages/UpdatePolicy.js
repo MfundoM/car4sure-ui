@@ -214,20 +214,7 @@ function UpdatePolicy() {
     };
 
     const removeVehicle = async (index, VehicleId) => {
-        if (!window.confirm('Are you sure you want to delete this driver?')) return;
-
         if (formData.vehicles.length <= 1) return;
-
-        console.log("Vehicle ID:", VehicleId);
-        if (VehicleId) {
-            try {
-                await axios.get('/sanctum/csrf-cookie');
-                await axios.delete(`/api/vehicles/${VehicleId}`);
-            } catch (error) {
-                console.error("Failed to delete vehicle:", error);
-                alert('Failed to delete vehicle');
-            }
-        }
 
         const updatedVehicles = [...formData.vehicles];
         updatedVehicles.splice(index, 1);
@@ -404,27 +391,25 @@ function UpdatePolicy() {
                                         <input
                                             className={`form-control ${errors[`vehicles.${vIndex}.coverages.${cIndex}.${key}`] ? 'is-invalid' : ''}`}
                                             name={key}
-                                            placeholder={key}
+                                            placeholder={key.replace(/_/g, ' ')}
                                             value={val}
                                             onChange={(e) => handleChange(e, 'vehicles', vIndex, 'coverages', cIndex)}
                                         />
                                         {errors[`vehicles.${vIndex}.coverages.${cIndex}.${key}`] && (
-                                            <div className="invalid-feedback">{errors[`vehicles.${vIndex}.coverages.${cIndex}.${key}`][0]}</div>
+                                            <div className="invalid-feedback">
+                                                {errors[`vehicles.${vIndex}.coverages.${cIndex}.${key}`][0]}
+                                            </div>
                                         )}
                                     </div>
                                 ))}
                             </div>
                         ))}
-                        <div className="d-flex justify-content-between align-items-center mt-3">
-                            <button
-                                type="button"
-                                className="btn btn-outline-secondary btn-sm"
-                                onClick={() => addCoverage(vIndex)}
-                            >
-                                Add Coverage
-                            </button>
+                        <button type="button" className="btn btn-outline-primary btn-sm" onClick={() => addCoverage(vIndex)}>
+                            Add Coverage
+                        </button>
 
-                            {formData.vehicles.length > 1 && (
+                        {formData.vehicles.length > 1 && (
+                            <div className="text-end mt-2">
                                 <button
                                     type="button"
                                     className="btn btn-danger btn-sm"
@@ -432,10 +417,11 @@ function UpdatePolicy() {
                                 >
                                     Remove Vehicle
                                 </button>
-                            )}
-                        </div>
+                            </div>
+                        )}
                     </div>
                 ))}
+
                 <button type="button" className="btn btn-outline-success mb-3" onClick={addVehicle}>Add Vehicle</button>
 
                 <div className="d-flex justify-content-between">
