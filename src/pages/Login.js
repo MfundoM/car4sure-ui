@@ -16,7 +16,7 @@ const Login = ({ setUser }) => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
 
@@ -25,25 +25,30 @@ const Login = ({ setUser }) => {
             return;
         }
 
-        axios.get('/sanctum/csrf-cookie').then(() => {
-            axios.post('/api/login', form)
-                .then(response => {
-                    console.log(response.data.token);
-                    sessionStorage.setItem('token', response.data.token);
-                    axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
-                    setUser(response.data.user);
-                    navigate('/dashboard');
-                })
-                .catch(err => {
-                    console.log(err.response.data);
-                    if (err.response && err.response.data) {
-                        const firstError = Object.values(err.response.data['message']);
-                        setError(firstError);
-                    } else {
-                        setError('Login failed. Please try again.');
-                    }
-                });
-        });
+        try {
+            await axios.get('/sanctum/csrf-cookie');
+
+            const response = await axios.post('/api/login', form);
+
+            sessionStorage.setItem('token', response.data.token);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+            setUser(response.data.user);
+            navigate('/dashboard');
+
+        } catch (err) {
+            console.error(err);
+
+            if (err.response && err.response.data) {
+                if (typeof err.response.data.message === 'string') {
+                    setError(err.response.data.message);
+                } else {
+                    const firstError = Object.values(err.response.data.message)[0];
+                    setError(firstError);
+                }
+            } else {
+                setError('Login failed. Please try again.');
+            }
+        }
     };
 
     return (

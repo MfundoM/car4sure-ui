@@ -42,13 +42,11 @@ const Register = ({ setUser }) => {
             };
 
             const { data } = await axios.post('/api/login', loginForm);
-            console.log(data.token);
-
             sessionStorage.setItem('token', data.token);
             axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
-
             setUser(data.user);
             navigate('/dashboard');
+
         } catch (err) {
             console.log(err.response?.data);
             if (err.response?.data?.errors) {

@@ -42,11 +42,13 @@ function Dashboard() {
                 <div className="container-fluid mt-4">
                     <div className="d-flex align-items-center mt-4">
                         <h1 className="mb-0">Dashboard</h1>
-                        <button className="btn btn-sm btn-success ms-auto">Apply for a policy</button>
+                        <Link to="/policies/create" className="ms-auto">
+                            <button className="btn btn-sm btn-success">Apply for a policy</button>
+                        </Link>
                     </div>
                     {policies.length === 0 ? (
                         <div className="alert alert-info text-center">
-                            You don't have any policies, click <a href='/'>here</a> to apply a policy.
+                            You don't have any policies, click <Link to='/policies/create'>here</Link> to apply a policy.
                         </div>
                     ) : (
                         <div className="table-responsive">

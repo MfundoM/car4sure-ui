@@ -6,6 +6,8 @@ import Register from './pages/Register';
 import axios from './axios';
 import Dashboard from './pages/Dashboard';
 import PolicyView from './pages/PolicyView';
+import CreatePolicy from './pages/CreatePolicy';
+import UpdatePolicy from './pages/UpdatePolicy';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -51,6 +53,26 @@ function App() {
             <ProtectedRoute user={user}>
               <div className='container'>
                 <PolicyView />
+              </div>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/policies/create"
+          element={
+            <ProtectedRoute user={user}>
+              <div className='container'>
+                <CreatePolicy />
+              </div>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/policies/:id/edit"
+          element={
+            <ProtectedRoute user={user}>
+              <div className='container'>
+                <UpdatePolicy />
               </div>
             </ProtectedRoute>
           }
