@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 function UpdatePolicy() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const [policy, setPolicy] = useState(null);
 
     const [formData, setFormData] = useState({
         policy_effective_date: '',
@@ -80,6 +81,7 @@ function UpdatePolicy() {
                 console.log(response.data);
                 const policy = response.data.data;
 
+                setPolicy(response.data.data)
                 setFormData({
                     policy_effective_date: policy.policy_effective_date,
                     policy_expiration_date: policy.policy_expiration_date,
@@ -237,6 +239,16 @@ function UpdatePolicy() {
             <span className="visually-hidden">Loading...</span>
         </div>
     </div>;
+
+    if (!policy) {
+        return (
+            <div className="container mt-4">
+                <div className="alert alert-info text-center">
+                    Policy data not found.
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="container py-4">
