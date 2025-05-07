@@ -25,6 +25,10 @@ This is the frontend of the **Car4Sure Insurance Policy Management System**, bui
 
 ---
 
+### Live link
+
+[Live](https://car4sure-ui.netlify.app)
+
 ## Setup Instructions
 
 ```bash
