@@ -17,11 +17,24 @@ function App() {
 
   useEffect(() => {
     const token = sessionStorage.getItem('token');
+    const cachedUser = sessionStorage.getItem('user');
+
     if (token) {
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+      if (cachedUser) {
+        setUser(JSON.parse(cachedUser));
+      }
+
       axios.get('/api/user')
-        .then(res => setUser(res.data))
-        .catch(() => setUser(null))
+        .then(res => {
+          setUser(res.data);
+          sessionStorage.setItem('user', JSON.stringify(res.data));
+        })
+        .catch(() => {
+          setUser(null);
+          sessionStorage.removeItem('user');
+        })
         .finally(() => setLoading(false));
     } else {
       setUser(null);

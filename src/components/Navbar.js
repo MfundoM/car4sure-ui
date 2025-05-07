@@ -6,6 +6,7 @@ const Navbar = ({ user, setUser }) => {
     const handleLogout = async () => {
         await axios.post('/api/logout');
         sessionStorage.removeItem('token');
+        sessionStorage.removeItem('user');
         delete axios.defaults.headers.common['Authorization'];
         setUser(null);
     };

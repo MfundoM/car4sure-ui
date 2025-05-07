@@ -34,15 +34,14 @@ function Dashboard() {
         }
     };
 
+    if (loading) return <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+        <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+        </div>
+    </div>;
+
     return (
         <div className="d-flex" id="wrapper">
-            {loading && (
-                <div className="position-fixed top-0 start-0 w-100 h-100 bg-white bg-opacity-75 d-flex justify-content-center align-items-center" style={{ zIndex: 1050 }}>
-                    <div className="spinner-border text-primary" role="status">
-                        <span className="visually-hidden">Loading...</span>
-                    </div>
-                </div>
-            )}
             <div id="page-content-wrapper" className="flex-grow-1">
                 <div className="container-fluid mt-4">
                     <div className="d-flex align-items-center mt-4">

@@ -41,6 +41,12 @@ const PolicyView = () => {
     }
   };
 
+  if (loading) return <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+    <div className="spinner-border text-primary" role="status">
+      <span className="visually-hidden">Loading...</span>
+    </div>
+  </div>;
+
   if (!policy) {
     return (
       <div className="container mt-4">
@@ -55,13 +61,6 @@ const PolicyView = () => {
 
   return (
     <div className="container mt-4">
-      {loading && (
-        <div className="position-fixed top-0 start-0 w-100 h-100 bg-white bg-opacity-75 d-flex justify-content-center align-items-center" style={{ zIndex: 1050 }}>
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-        </div>
-      )}
       <div className="d-flex align-items-center mb-3">
         <button className="btn btn-outline-secondary btn-sm me-auto" onClick={() => navigate(-1)}>
           Back
