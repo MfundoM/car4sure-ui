@@ -27,10 +27,10 @@ This is the frontend of the **Car4Sure Insurance Policy Management System**, bui
 
 ## Setup Instructions
 
-### 1. Navigate to the frontend directory
-
 ```bash
-cd car4sure/frontend
+```bash
+git clone https://github.com/MfundoM/car4sure-ui.git
+cd car4sure-ui
 
 # Install dependencies
 npm install
