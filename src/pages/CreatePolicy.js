@@ -132,6 +132,22 @@ function CreatePolicy() {
         }
     };
 
+    const removeDriver = async (index, driverId) => {
+        if (formData.drivers.length <= 1) return;
+
+        const updatedDrivers = [...formData.drivers];
+        updatedDrivers.splice(index, 1);
+        setFormData({ ...formData, drivers: updatedDrivers });
+    };
+
+    const removeVehicle = async (index, VehicleId) => {
+        if (formData.vehicles.length <= 1) return;
+
+        const updatedVehicles = [...formData.vehicles];
+        updatedVehicles.splice(index, 1);
+        setFormData({ ...formData, vehicles: updatedVehicles });
+    };
+
     return (
         <div className="container py-4">
             <h2 className="text-center mb-4">Create Policy</h2>
@@ -232,6 +248,17 @@ function CreatePolicy() {
                                 </div>
                             ))}
                         </div>
+                        {formData.drivers.length > 1 && (
+                            <div className="text-end">
+                                <button
+                                    type="button"
+                                    className="btn btn-danger btn-sm"
+                                    onClick={() => removeDriver(i, driver.id)}
+                                >
+                                    Remove Driver
+                                </button>
+                            </div>
+                        )}
                     </div>
                 ))}
                 <button type="button" className="btn btn-outline-success mb-3" onClick={addDriver}>Add Driver</button>
@@ -303,7 +330,25 @@ function CreatePolicy() {
                                 ))}
                             </div>
                         ))}
-                        <button type="button" className="btn btn-outline-secondary mt-2" onClick={() => addCoverage(vIndex)}>Add Coverage</button>
+                        <div className="d-flex justify-content-between align-items-center mt-3">
+                            <button
+                                type="button"
+                                className="btn btn-outline-secondary btn-sm"
+                                onClick={() => addCoverage(vIndex)}
+                            >
+                                Add Coverage
+                            </button>
+
+                            {formData.vehicles.length > 1 && (
+                                <button
+                                    type="button"
+                                    className="btn btn-danger btn-sm"
+                                    onClick={() => removeVehicle(vIndex, vehicle.id)}
+                                >
+                                    Remove Vehicle
+                                </button>
+                            )}
+                        </div>
                     </div>
                 ))}
                 <button type="button" className="btn btn-outline-success mb-3" onClick={addVehicle}>Add Vehicle</button>

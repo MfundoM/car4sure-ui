@@ -19,6 +19,7 @@ const PolicyView = () => {
 
   const handleDownload = async () => {
     try {
+      setLoading(true);
       const response = await axios.get(`/api/policies/${id}/download`, {
         responseType: 'blob',
       });
@@ -35,11 +36,17 @@ const PolicyView = () => {
       URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Download failed:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
 
-  if (loading) return <div className="text-center mt-5">Loading policy data...</div>;
+  if (loading) return <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+    <div className="spinner-border text-primary" role="status">
+      <span className="visually-hidden">Loading...</span>
+    </div>
+  </div>;
 
   if (!policy) {
     return (
@@ -60,7 +67,7 @@ const PolicyView = () => {
           Back
         </button>
         <button className="btn btn-sm btn-success" onClick={handleDownload}>
-          Download Policy Certificate
+          {loading ? 'Processing...' : 'Download Policy Certificate'}
         </button>
       </div>
 

@@ -34,7 +34,11 @@ function Dashboard() {
         }
     };
 
-    if (loading) return <div className="text-center mt-5">Loading policies...</div>;
+    if (loading) return <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+        <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+        </div>
+    </div>;
 
     return (
         <div className="d-flex" id="wrapper">

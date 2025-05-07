@@ -20,6 +20,7 @@ function UpdatePolicy() {
     const [loading, setLoading] = useState(true);
 
     const sanitizeDriver = (driver) => ({
+        id: driver.id,
         first_name: driver.first_name,
         last_name: driver.last_name,
         age: driver.age,
@@ -47,6 +48,7 @@ function UpdatePolicy() {
     });
 
     const sanitizeVehicle = (vehicle) => ({
+        id: vehicle.id,
         year: vehicle.year,
         make: vehicle.make,
         model: vehicle.model,
@@ -188,7 +190,53 @@ function UpdatePolicy() {
         }
     };
 
-    if (loading) return <div className="text-center py-5">Loading Policy data...</div>;
+    const removeDriver = async (index, driverId) => {
+        if (!window.confirm('Are you sure you want to delete this driver?')) return;
+
+        if (formData.drivers.length <= 1) return;
+
+        console.log("Driver ID:", driverId);
+        if (driverId) {
+            try {
+                await axios.get('/sanctum/csrf-cookie');
+                await axios.delete(`/api/drivers/${driverId}`);
+            } catch (error) {
+                console.error("Failed to delete driver:", error);
+                alert('Failed to delete driver');
+            }
+        }
+
+        const updatedDrivers = [...formData.drivers];
+        updatedDrivers.splice(index, 1);
+        setFormData({ ...formData, drivers: updatedDrivers });
+    };
+
+    const removeVehicle = async (index, VehicleId) => {
+        if (!window.confirm('Are you sure you want to delete this driver?')) return;
+
+        if (formData.vehicles.length <= 1) return;
+
+        console.log("Vehicle ID:", VehicleId);
+        if (VehicleId) {
+            try {
+                await axios.get('/sanctum/csrf-cookie');
+                await axios.delete(`/api/vehicles/${VehicleId}`);
+            } catch (error) {
+                console.error("Failed to delete vehicle:", error);
+                alert('Failed to delete vehicle');
+            }
+        }
+
+        const updatedVehicles = [...formData.vehicles];
+        updatedVehicles.splice(index, 1);
+        setFormData({ ...formData, vehicles: updatedVehicles });
+    };
+
+    if (loading) return <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+        <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+        </div>
+    </div>;
 
     return (
         <div className="container py-4">
@@ -260,21 +308,34 @@ function UpdatePolicy() {
                     <div key={i} className="border p-3 mb-3">
                         <div className="row">
                             {Object.entries(driver).map(([key, val]) => (
-                                <div className="col-md-6 mb-2" key={key}>
-                                    <input
-                                        className={`form-control ${errors[`drivers.${i}.${key}`] ? 'is-invalid' : ''}`}
-                                        name={key}
-                                        type={key.includes('date') ? 'date' : 'text'}
-                                        placeholder={key.replace(/_/g, ' ')}
-                                        value={val}
-                                        onChange={(e) => handleChange(e, 'drivers', i)}
-                                    />
-                                    {errors[`drivers.${i}.${key}`] && (
-                                        <div className="invalid-feedback">{errors[`drivers.${i}.${key}`][0]}</div>
-                                    )}
-                                </div>
+                                key !== 'id' && (
+                                    <div className="col-md-6 mb-2" key={key}>
+                                        <input
+                                            className={`form-control ${errors[`drivers.${i}.${key}`] ? 'is-invalid' : ''}`}
+                                            name={key}
+                                            type={key.includes('date') ? 'date' : 'text'}
+                                            placeholder={key.replace(/_/g, ' ')}
+                                            value={val}
+                                            onChange={(e) => handleChange(e, 'drivers', i)}
+                                        />
+                                        {errors[`drivers.${i}.${key}`] && (
+                                            <div className="invalid-feedback">{errors[`drivers.${i}.${key}`][0]}</div>
+                                        )}
+                                    </div>
+                                )
                             ))}
                         </div>
+                        {formData.drivers.length > 1 && (
+                            <div className="text-end">
+                                <button
+                                    type="button"
+                                    className="btn btn-danger btn-sm"
+                                    onClick={() => removeDriver(i, driver.id)}
+                                >
+                                    Remove Driver
+                                </button>
+                            </div>
+                        )}
                     </div>
                 ))}
                 <button type="button" className="btn btn-outline-success mb-3" onClick={addDriver}>Add Driver</button>
@@ -285,20 +346,22 @@ function UpdatePolicy() {
                     <div key={vIndex} className="border p-3 mb-3">
                         <h5>Vehicle #{vIndex + 1}</h5>
                         <div className="row">
-                            {['year', 'make', 'model', 'vin', 'usage', 'primary_use', 'annual_mileage', 'ownership'].map(field => (
-                                <div className="col-md-6 mb-2" key={field}>
-                                    <input
-                                        className={`form-control ${errors[`vehicles.${vIndex}.${field}`] ? 'is-invalid' : ''}`}
-                                        name={field}
-                                        placeholder={field.replace('_', ' ')}
-                                        value={vehicle[field]}
-                                        onChange={(e) => handleChange(e, 'vehicles', vIndex)}
-                                    />
-                                    {errors[`vehicles.${vIndex}.${field}`] && (
-                                        <div className="invalid-feedback">{errors[`vehicles.${vIndex}.${field}`][0]}</div>
-                                    )}
-                                </div>
-                            ))}
+                            {Object.entries(vehicle)
+                                .filter(([key]) => !['id', 'policy_id', 'created_at', 'updated_at', 'garaging_address', 'coverages'].includes(key))
+                                .map(([key, val]) => (
+                                    <div className="col-md-6 mb-2" key={key}>
+                                        <input
+                                            className={`form-control ${errors[`vehicles.${vIndex}.${key}`] ? 'is-invalid' : ''}`}
+                                            name={key}
+                                            placeholder={key.replace(/_/g, ' ')}
+                                            value={val}
+                                            onChange={(e) => handleChange(e, 'vehicles', vIndex)}
+                                        />
+                                        {errors[`vehicles.${vIndex}.${key}`] && (
+                                            <div className="invalid-feedback">{errors[`vehicles.${vIndex}.${key}`][0]}</div>
+                                        )}
+                                    </div>
+                                ))}
                         </div>
 
                         {/* Garaging Address */}
@@ -340,7 +403,25 @@ function UpdatePolicy() {
                                 ))}
                             </div>
                         ))}
-                        <button type="button" className="btn btn-outline-secondary mt-2" onClick={() => addCoverage(vIndex)}>Add Coverage</button>
+                        <div className="d-flex justify-content-between align-items-center mt-3">
+                            <button
+                                type="button"
+                                className="btn btn-outline-secondary btn-sm"
+                                onClick={() => addCoverage(vIndex)}
+                            >
+                                Add Coverage
+                            </button>
+
+                            {formData.vehicles.length > 1 && (
+                                <button
+                                    type="button"
+                                    className="btn btn-danger btn-sm"
+                                    onClick={() => removeVehicle(vIndex, vehicle.id)}
+                                >
+                                    Remove Vehicle
+                                </button>
+                            )}
+                        </div>
                     </div>
                 ))}
                 <button type="button" className="btn btn-outline-success mb-3" onClick={addVehicle}>Add Vehicle</button>
