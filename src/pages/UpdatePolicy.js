@@ -193,20 +193,7 @@ function UpdatePolicy() {
     };
 
     const removeDriver = async (index, driverId) => {
-        if (!window.confirm('Are you sure you want to delete this driver?')) return;
-
         if (formData.drivers.length <= 1) return;
-
-        console.log("Driver ID:", driverId);
-        if (driverId) {
-            try {
-                await axios.get('/sanctum/csrf-cookie');
-                await axios.delete(`/api/drivers/${driverId}`);
-            } catch (error) {
-                console.error("Failed to delete driver:", error);
-                alert('Failed to delete driver');
-            }
-        }
 
         const updatedDrivers = [...formData.drivers];
         updatedDrivers.splice(index, 1);
