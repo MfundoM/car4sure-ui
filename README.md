@@ -14,7 +14,7 @@ This is the frontend of the **Car4Sure Insurance Policy Management System**, bui
 
 ---
 
-## Library choice: React (JavaScript Library)
+## Library choice: React
 
 I chose **React** for the frontend because of its component-based architecture and efficiency in building modern user interfaces. React enables:
 
