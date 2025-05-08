@@ -4,6 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 
 const Register = ({ setUser }) => {
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
@@ -32,6 +33,7 @@ const Register = ({ setUser }) => {
         }
 
         try {
+            setLoading(true);
             await axios.get('/sanctum/csrf-cookie');
 
             await axios.post('/api/register', formData);
@@ -55,8 +57,16 @@ const Register = ({ setUser }) => {
             } else {
                 setError('Registration failed. Please try again.');
             }
+        } finally {
+            setLoading(false);
         }
     };
+
+    if (loading) return <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+        <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+        </div>
+    </div>;
 
     return (
         <div className="container d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
